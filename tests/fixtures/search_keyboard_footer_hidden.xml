@@ -1,0 +1,222 @@
+<?xml version='1.0' encoding='utf8'?>
+<hierarchy rotation="0">
+
+  <node index="0" text="" resource-id="" class="android.widget.FrameLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,3200]" drawing-order="0" hint="" display-id="0">
+
+    <node index="0" text="" resource-id="" class="android.widget.FrameLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,3200]" drawing-order="2" hint="" display-id="0" />
+
+    <node index="1" text="" resource-id="" class="android.widget.LinearLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,3200]" drawing-order="1" hint="" display-id="0">
+
+      <node index="0" text="" resource-id="android:id/content" class="android.widget.FrameLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,3200]" drawing-order="2" hint="" display-id="0">
+
+        <node index="0" text="" resource-id="android:id/parentPanel" class="android.widget.LinearLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,3200]" drawing-order="1" hint="" display-id="0">
+
+          <node index="0" text="" resource-id="android:id/fullscreenArea" class="android.widget.LinearLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,2136]" drawing-order="1" hint="" display-id="0">
+
+            <node index="0" text="" resource-id="android:id/candidatesArea" class="android.widget.FrameLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,2136]" drawing-order="2" hint="" display-id="0">
+
+              <node index="0" text="" resource-id="" class="android.widget.FrameLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,2136]" drawing-order="1" hint="" display-id="0">
+
+                <node index="0" text="" resource-id="" class="android.widget.LinearLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,2136]" drawing-order="1" hint="" display-id="0">
+
+                  <node index="1" text="" resource-id="" class="android.widget.LinearLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,2136]" drawing-order="2" hint="" display-id="0">
+
+                    <node index="1" text="" resource-id="" class="android.view.View" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="true" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,2136]" drawing-order="2" hint="" display-id="0" />
+
+                  </node>
+
+                </node>
+
+              </node>
+
+            </node>
+
+          </node>
+
+          <node index="1" text="" resource-id="android:id/inputArea" class="android.widget.FrameLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,2136][1440,2994]" drawing-order="2" hint="" display-id="0">
+
+            <node index="0" text="" resource-id="" class="android.widget.FrameLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,2136][1440,2994]" drawing-order="1" hint="" display-id="0">
+
+              <node index="0" text="" resource-id="" class="android.view.View" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,2136][1440,2994]" drawing-order="1" hint="" display-id="0" />
+
+            </node>
+
+          </node>
+
+          <node index="2" text="" resource-id="android:id/miui_bottom_area" class="android.widget.FrameLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,2994][1440,3200]" drawing-order="3" hint="" display-id="0">
+
+            <node index="0" text="" resource-id="" class="android.widget.RelativeLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,2994][1440,3200]" drawing-order="1" hint="" display-id="0">
+
+              <node index="0" text="" resource-id="" class="android.widget.RelativeLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,2994][1440,3200]" drawing-order="1" hint="" display-id="0">
+
+                <node index="0" text="" resource-id="com.miui.phrase:id/input_bottom_view" class="android.widget.RelativeLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="true" password="false" selected="false" visible-to-user="true" bounds="[0,2994][1440,3200]" drawing-order="1" hint="" display-id="0" />
+
+                <node index="1" text="" resource-id="com.miui.phrase:id/input_bottom_layout_left" class="android.widget.LinearLayout" package="com.baidu.input_mi" content-desc="切换输入法" checkable="false" checked="false" clickable="true" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="true" password="false" selected="false" visible-to-user="true" bounds="[98,2994][309,3200]" drawing-order="4" hint="" display-id="0">
+
+                  <node index="0" text="" resource-id="com.miui.phrase:id/input_bottom_button_left" class="android.widget.ImageView" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[98,3039][211,3152]" drawing-order="1" hint="" display-id="0" />
+
+                </node>
+
+                <node index="2" text="" resource-id="com.miui.phrase:id/input_bottom_layout_right" class="android.widget.LinearLayout" package="com.baidu.input_mi" content-desc="剪贴板和常用语" checkable="false" checked="false" clickable="true" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="true" password="false" selected="false" visible-to-user="true" bounds="[1131,2994][1342,3200]" drawing-order="9" hint="" display-id="0">
+
+                  <node index="0" text="" resource-id="com.miui.phrase:id/input_bottom_button_right" class="android.widget.ImageView" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[1229,3039][1342,3152]" drawing-order="1" hint="" display-id="0" />
+
+                </node>
+
+              </node>
+
+            </node>
+
+          </node>
+
+        </node>
+
+      </node>
+
+    </node>
+
+  </node>
+
+  <node index="0" text="" resource-id="" class="android.widget.FrameLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,0][1440,3200]" drawing-order="0" hint="" display-id="0">
+
+    <node index="0" text="" resource-id="" class="android.widget.LinearLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,0][1440,3125]" drawing-order="1" hint="" display-id="0">
+
+      <node index="0" text="" resource-id="" class="android.widget.FrameLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,0][1440,3125]" drawing-order="2" hint="" display-id="0">
+
+        <node index="0" text="" resource-id="com.jingcai.apps.qualitydev:id/action_bar_root" class="android.widget.LinearLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,0][1440,3125]" drawing-order="1" hint="" display-id="0">
+
+          <node index="0" text="" resource-id="android:id/content" class="android.widget.FrameLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,0][1440,3125]" drawing-order="2" hint="" display-id="0">
+
+            <node index="0" text="" resource-id="" class="android.widget.LinearLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,161][1440,3125]" drawing-order="1" hint="" display-id="0">
+
+              <node index="0" text="" resource-id="com.jingcai.apps.qualitydev:id/toolbar_home" class="android.widget.LinearLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,161][1440,388]" drawing-order="1" hint="" display-id="0">
+
+                <node index="0" text="" resource-id="" class="android.widget.FrameLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[76,217][1111,369]" drawing-order="2" hint="" display-id="0">
+
+                  <node index="0" text="" resource-id="com.jingcai.apps.qualitydev:id/layout_search_bar" class="android.widget.LinearLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[76,217][1111,369]" drawing-order="1" hint="" display-id="0">
+
+                    <node NAF="true" index="0" text="" resource-id="com.jingcai.apps.qualitydev:id/back" class="android.widget.ImageView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="true" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[76,217][197,369]" drawing-order="1" hint="" display-id="0" />
+
+                    <node index="1" text="范" resource-id="com.jingcai.apps.qualitydev:id/text_searchcontent" class="android.widget.EditText" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="true" enabled="true" focusable="true" focused="true" scrollable="false" long-clickable="true" password="false" selected="false" visible-to-user="true" bounds="[197,217][1111,369]" drawing-order="2" hint="搜索" display-id="0" />
+
+                  </node>
+
+                </node>
+
+                <node index="1" text="筛选" resource-id="com.jingcai.apps.qualitydev:id/btn_screen" class="android.widget.RadioButton" package="com.jingcai.apps.qualitydev" content-desc="" checkable="true" checked="false" clickable="true" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[1179,199][1440,388]" drawing-order="1" hint="" display-id="0" />
+
+              </node>
+
+              <node index="1" text="" resource-id="" class="android.widget.LinearLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,445][1440,3125]" drawing-order="2" hint="" display-id="0">
+
+                <node index="0" text="" resource-id="com.jingcai.apps.qualitydev:id/radiogroup" class="android.widget.RadioGroup" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[76,445][1364,541]" drawing-order="1" hint="" display-id="0">
+
+                  <node index="0" text="已获得其他学分" resource-id="com.jingcai.apps.qualitydev:id/radio_sign" class="android.widget.RadioButton" package="com.jingcai.apps.qualitydev" content-desc="" checkable="true" checked="false" clickable="true" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[76,445][509,541]" drawing-order="1" hint="" display-id="0" />
+
+                  <node index="1" text="未获得任何学分" resource-id="com.jingcai.apps.qualitydev:id/radio_luqu" class="android.widget.RadioButton" package="com.jingcai.apps.qualitydev" content-desc="" checkable="true" checked="true" clickable="true" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[547,445][980,541]" drawing-order="2" hint="" display-id="0" />
+
+                </node>
+
+                <node index="1" text="" resource-id="com.jingcai.apps.qualitydev:id/main_vp_container" class="androidx.viewpager.widget.ViewPager" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="true" focused="false" scrollable="true" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,541][1440,3125]" drawing-order="2" hint="" display-id="0">
+
+                  <node index="1" text="" resource-id="com.jingcai.apps.qualitydev:id/loaddingLayout" class="android.widget.FrameLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,598][1440,3125]" drawing-order="1" hint="" display-id="0">
+
+                    <node index="0" text="" resource-id="" class="android.widget.RelativeLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,598][1440,3125]" drawing-order="5" hint="" display-id="0">
+
+                      <node index="0" text="" resource-id="" class="android.widget.LinearLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,598][1440,3125]" drawing-order="1" hint="" display-id="0">
+
+                        <node index="0" text="" resource-id="com.jingcai.apps.qualitydev:id/smartlayout" class="android.view.ViewGroup" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,598][1440,2927]" drawing-order="1" hint="" display-id="0">
+
+                          <node index="1" text="" resource-id="com.jingcai.apps.qualitydev:id/recycleview" class="androidx.recyclerview.widget.RecyclerView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,598][1440,2927]" drawing-order="1" hint="" display-id="0">
+
+                            <node index="0" text="" resource-id="" class="android.widget.LinearLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="true" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,598][1440,906]" drawing-order="1" hint="" display-id="0">
+
+                              <node index="0" text="" resource-id="" class="android.widget.RelativeLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,598][1440,902]" drawing-order="1" hint="" display-id="0">
+
+                                <node index="0" text="" resource-id="com.jingcai.apps.qualitydev:id/layout_userhead" class="android.widget.LinearLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[76,693][187,804]" drawing-order="1" hint="" display-id="0">
+
+                                  <node NAF="true" index="0" text="" resource-id="com.jingcai.apps.qualitydev:id/img_head" class="android.widget.ImageView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="true" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[84,701][179,796]" drawing-order="1" hint="" display-id="0" />
+
+                                </node>
+
+                                <node index="1" text="" resource-id="com.jingcai.apps.qualitydev:id/title_layout" class="android.widget.LinearLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[225,693][413,753]" drawing-order="2" hint="" display-id="0">
+
+                                  <node index="0" text="范甲" resource-id="com.jingcai.apps.qualitydev:id/title" class="android.widget.TextView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[225,693][360,753]" drawing-order="1" hint="" display-id="0" />
+
+                                  <node index="1" text="" resource-id="com.jingcai.apps.qualitydev:id/img_g" class="android.widget.ImageView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[379,706][413,740]" drawing-order="2" hint="" display-id="0" />
+
+                                </node>
+
+                                <node index="2" text="2023级·测试学院·测试班" resource-id="com.jingcai.apps.qualitydev:id/tv_school_college" class="android.widget.TextView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[225,783][1010,832]" drawing-order="3" hint="" display-id="0" />
+
+                                <node index="3" text="" resource-id="com.jingcai.apps.qualitydev:id/ll_imgcheck" class="android.widget.LinearLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[1166,598][1440,902]" drawing-order="4" hint="" display-id="0">
+
+                                  <node index="0" text="" resource-id="com.jingcai.apps.qualitydev:id/img_check" class="android.widget.ImageView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[1242,719][1364,780]" drawing-order="1" hint="" display-id="0" />
+
+                                </node>
+
+                              </node>
+
+                              <node index="1" text="" resource-id="" class="android.view.View" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[76,902][1364,906]" drawing-order="2" hint="" display-id="0" />
+
+                            </node>
+
+                            <node index="1" text="" resource-id="" class="android.widget.LinearLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="true" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,906][1440,1214]" drawing-order="2" hint="" display-id="0">
+
+                              <node index="0" text="" resource-id="" class="android.widget.RelativeLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,906][1440,1210]" drawing-order="1" hint="" display-id="0">
+
+                                <node index="0" text="" resource-id="com.jingcai.apps.qualitydev:id/layout_userhead" class="android.widget.LinearLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[76,1001][187,1112]" drawing-order="1" hint="" display-id="0">
+
+                                  <node NAF="true" index="0" text="" resource-id="com.jingcai.apps.qualitydev:id/img_head" class="android.widget.ImageView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="true" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[84,1009][179,1104]" drawing-order="1" hint="" display-id="0" />
+
+                                </node>
+
+                                <node index="1" text="" resource-id="com.jingcai.apps.qualitydev:id/title_layout" class="android.widget.LinearLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[225,1001][413,1061]" drawing-order="2" hint="" display-id="0">
+
+                                  <node index="0" text="范乙" resource-id="com.jingcai.apps.qualitydev:id/title" class="android.widget.TextView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[225,1001][360,1061]" drawing-order="1" hint="" display-id="0" />
+
+                                  <node index="1" text="" resource-id="com.jingcai.apps.qualitydev:id/img_g" class="android.widget.ImageView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[379,1014][413,1048]" drawing-order="2" hint="" display-id="0" />
+
+                                </node>
+
+                                <node index="2" text="2023级·测试学院·测试班" resource-id="com.jingcai.apps.qualitydev:id/tv_school_college" class="android.widget.TextView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[225,1091][1011,1140]" drawing-order="3" hint="" display-id="0" />
+
+                                <node index="3" text="" resource-id="com.jingcai.apps.qualitydev:id/ll_imgcheck" class="android.widget.LinearLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[1166,906][1440,1210]" drawing-order="4" hint="" display-id="0">
+
+                                  <node index="0" text="" resource-id="com.jingcai.apps.qualitydev:id/img_check" class="android.widget.ImageView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[1242,1027][1364,1088]" drawing-order="1" hint="" display-id="0" />
+
+                                </node>
+
+                              </node>
+
+                              <node index="1" text="" resource-id="" class="android.view.View" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[76,1210][1364,1214]" drawing-order="2" hint="" display-id="0" />
+
+                            </node>
+
+                          </node>
+
+                        </node>
+
+                      </node>
+
+                    </node>
+
+                  </node>
+
+                </node>
+
+              </node>
+
+            </node>
+
+          </node>
+
+        </node>
+
+      </node>
+
+    </node>
+
+  </node>
+
+</hierarchy>

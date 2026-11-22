@@ -1,4 +1,4 @@
-"""gui.py —— 到梦空间助手（图形界面）。
+﻿"""gui.py —— 到梦空间助手（图形界面）。
 
 双击 `启动.bat`，或者命令行 `python gui.py`。
 
@@ -143,6 +143,7 @@ class App:
         self.rows = []
         self.device = None
         self.running = False
+        self._stop_event = threading.Event()
         self.mode = {"makeup": "dry"}  # 当前补签阶段：dry/opened
         self._q = queue.Queue()
         self._work_report_path = None
@@ -244,6 +245,7 @@ class App:
                             focuscolor="white" if ink == "white" else c["blue"],
                             font=("Microsoft YaHei UI", 10, "bold" if "Primary" in name else "normal"))
             style.map(name, foreground=[("disabled", "#59697D"), ("selected", c["blue"]), ("!disabled", ink)])
+        style.configure("Submit.TButton", justify="center")
         style.configure("TRadiobutton", background=c["paper"], foreground=c["muted"],
                         padding=(p(2), p(6)), focuscolor=c["blue"])
         style.map("TRadiobutton", background=[("active", c["paper"])],
@@ -271,8 +273,8 @@ class App:
         style.configure("Activity.Treeview.Heading", background="#F2F6FB",
                         foreground=c["muted"], relief="flat", borderwidth=0,
                         padding=(p(8), p(10)), font=("Microsoft YaHei UI", 9, "bold"))
-        style.map("Activity.Treeview", background=[("selected", "#E7EFFD")],
-                  foreground=[("selected", "#183D7F")])
+        style.map("Activity.Treeview", background=[("selected", "#2458A6")],
+                  foreground=[("selected", "#FFFFFF")])
         style.map("Activity.Treeview.Heading", background=[("active", "#E6ECF4")])
         style.configure("Vertical.TScrollbar", background="#C7D3E3", troughcolor=c["paper"],
                         bordercolor=c["paper"], lightcolor=c["paper"], darkcolor=c["paper"],
@@ -327,19 +329,9 @@ class App:
         ttk.Label(left, text="「管理」列表（选中一条再操作）",
                   style="Section.TLabel").grid(row=0, column=0, sticky="w", pady=(p(2), p(14)))
 
-        # Treeview 子类只附加行样式，不改变值、返回值或业务调用。
-        class ActivityTree(ttk.Treeview):
-            def insert(tree, parent, index, iid=None, **kw):
-                number = len(tree.get_children(parent))
-                tags = tuple(kw.get("tags", ()))
-                kw["tags"] = tags + ("stripe" if number % 2 else "plain",)
-                item = super().insert(parent, index, iid=iid, **kw)
-                tree.after_idle(self._paint_activity_states)
-                return item
-
         cols = ("idx", "name", "state", "todo")
-        self.tree = ActivityTree(left, columns=cols, show="headings", height=8,
-                                 style="Activity.Treeview")
+        self.tree = ttk.Treeview(left, columns=cols, show="headings", height=8,
+                                 selectmode="browse", style="Activity.Treeview")
         for col, title, width in zip(cols, ("#", "活动名称", "状态", "处理"), (38, 330, 92, 54)):
             self.tree.heading(col, text=title, anchor="w" if col == "name" else "center")
             self.tree.column(col, width=p(width), minwidth=p(34 if col == "name" else width),
@@ -395,14 +387,14 @@ class App:
         self._wrap_label(grade_panel, "可按照实际年份填写").pack(fill="x", pady=(0, p(12)))
         ttk.Button(grade_panel, text="按年级勾选", command=self._select_makeup,
                    style="Primary.TButton").pack(fill="x")
-        self.btn_submit_mk = ttk.Button(grade_panel, text="提交补签（需确认）",
+        self.btn_submit_mk = ttk.Button(grade_panel, text="提交补签\n（请自行在手机上完成提交）",
                                        command=self._submit_makeup_checked, style="Submit.TButton")
         self.btn_submit_mk.pack(fill="x", pady=(p(8), 0))
         roster_panel = self._makeup_roster_panel
         ttk.Button(roster_panel, text="选择名单 xlsx", command=lambda: self._pick_task_roster("makeup")).pack(fill="x")
         self.lbl_makeup_roster = self._wrap_label(roster_panel, "未选名单", "Path.TLabel")
         self.lbl_makeup_roster.pack(fill="x", pady=(p(4), p(12)))
-        ttk.Button(roster_panel, text="按名单补签（需确认）", command=lambda: self._run_roster_task("makeup", True),
+        ttk.Button(roster_panel, text="按名单补签\n（请自行在手机上完成提交）", command=lambda: self._run_roster_task("makeup", True),
                    style="Submit.TButton").pack(fill="x")
         self._show_makeup_method()
 
@@ -413,29 +405,50 @@ class App:
         roster_panel.pack(fill="x", pady=(p(10), 0))
         ttk.Label(roster_panel, text="按名单录取", style="Section.TLabel").pack(
             anchor="w", pady=(0, p(14)))
-        ttk.Button(roster_panel, text="选择名单 xlsx", command=lambda: self._pick_task_roster("admit")).pack(fill="x")
+        ttk.Button(roster_panel, text="选择名单 xlsx（学号选填）", command=lambda: self._pick_task_roster("admit")).pack(fill="x")
         self.lbl_admit_roster = self._wrap_label(roster_panel, "未选名单", "Path.TLabel")
         self.lbl_admit_roster.pack(fill="x", pady=(p(4), p(12)))
         ttk.Button(roster_panel, text="演练（只勾选，不提交）", command=lambda: self._run_roster_task("admit", False),
                    style="Primary.TButton").pack(fill="x")
-        ttk.Button(roster_panel, text="正式录取（需确认）", command=lambda: self._run_roster_task("admit", True),
+        ttk.Button(roster_panel, text="正式录取\n（请自行在手机上完成提交）", command=lambda: self._run_roster_task("admit", True),
                    style="Submit.TButton").pack(fill="x", pady=(p(8), 0))
 
         cr = ttk.Frame(nb, style="Paper.TFrame")
         nb.add(cr, text="  学分  ")
-        ttk.Button(cr, text="选择名单 xlsx（姓名/学号）", command=lambda: self._pick_task_roster("credit")).pack(fill="x")
-        self.lbl_roster = self._wrap_label(cr, "未选名单", "Path.TLabel")
-        self.lbl_roster.pack(fill="x", pady=(p(4), p(12)))
+        self.credit_method = tk.StringVar(value="roster")
+        choices = ttk.Frame(cr, style="Paper.TFrame")
+        choices.pack(fill="x", pady=(p(2), p(14)))
+        for value, text in (("grade", "按年级发分"), ("roster", "按名单发分")):
+            ttk.Radiobutton(choices, text=text, variable=self.credit_method, value=value,
+                            command=self._show_credit_method).pack(side="left", padx=(0, p(16)))
         score_row = ttk.Frame(cr, style="Paper.TFrame")
         score_row.pack(fill="x", pady=(0, p(12)))
         ttk.Label(score_row, text="分值：").pack(side="left", padx=(0, p(12)))
         self.ent_score = ttk.Entry(score_row, width=8)
         self.ent_score.insert(0, "0.5")
         self.ent_score.pack(side="left")
-        ttk.Button(cr, text="演练（不发分）", command=lambda: self._run_roster_task("credit", False),
+        self._credit_grade_panel = ttk.Frame(cr, style="Paper.TFrame")
+        self._credit_roster_panel = ttk.Frame(cr, style="Paper.TFrame")
+        grade_panel = self._credit_grade_panel
+        row = ttk.Frame(grade_panel, style="Paper.TFrame")
+        row.pack(fill="x", pady=(0, p(8)))
+        ttk.Label(row, text="年级：").pack(side="left", padx=(0, p(12)))
+        self.cb_credit_grade = ttk.Combobox(row, values=grade_choices(), state="normal", width=10)
+        self.cb_credit_grade.current(0)
+        self.cb_credit_grade.pack(side="left", fill="x", expand=True)
+        self._wrap_label(grade_panel, "可按照实际年份填写").pack(fill="x", pady=(0, p(12)))
+        ttk.Button(grade_panel, text="按年级勾选", command=self._select_credit_grade,
                    style="Primary.TButton").pack(fill="x")
-        ttk.Button(cr, text="正式发放（需确认）", command=lambda: self._run_roster_task("credit", True),
+        self._wrap_label(grade_panel, "勾选完成后，请自行在手机上核对人数并完成提交。").pack(fill="x", pady=(p(8), 0))
+        roster_panel = self._credit_roster_panel
+        ttk.Button(roster_panel, text="选择名单 xlsx（学号选填）", command=lambda: self._pick_task_roster("credit")).pack(fill="x")
+        self.lbl_roster = self._wrap_label(roster_panel, "未选名单", "Path.TLabel")
+        self.lbl_roster.pack(fill="x", pady=(p(4), p(12)))
+        ttk.Button(roster_panel, text="演练（不发分）", command=lambda: self._run_roster_task("credit", False),
+                   style="Primary.TButton").pack(fill="x")
+        ttk.Button(roster_panel, text="正式发放\n（请自行在手机上完成提交）", command=lambda: self._run_roster_task("credit", True),
                    style="Submit.TButton").pack(fill="x", pady=(p(8), 0))
+        self._show_credit_method()
 
         # 保留本地比对页签。
         compare = ttk.Frame(nb, style="Paper.TFrame")
@@ -479,6 +492,8 @@ class App:
         logf.columnconfigure(0, weight=1)
         ttk.Label(logf, text="日志", style="Section.TLabel").grid(
             row=0, column=0, sticky="w", pady=(0, p(5)))
+        self.btn_stop = ttk.Button(logf, text="停止任务", command=self._request_stop, state="disabled")
+        self.btn_stop.grid(row=0, column=0, sticky="e", pady=(0, p(5)))
         self.log = ScrolledText(logf, height=3, state="disabled", wrap="word",
                                 font=("Microsoft YaHei UI", 9), background=c["paper"],
                                 foreground=c["muted"], borderwidth=0, relief="flat",
@@ -551,6 +566,60 @@ class App:
         self._makeup_roster_panel.pack_forget()
         panel = self._makeup_grade_panel if self._visible_makeup_method == "grade" else self._makeup_roster_panel
         panel.pack(fill="x")
+
+    def _show_credit_method(self):
+        if self.running:
+            self.credit_method.set(self._visible_credit_method)
+            return
+        self._visible_credit_method = self.credit_method.get()
+        self._credit_grade_panel.pack_forget()
+        self._credit_roster_panel.pack_forget()
+        panel = self._credit_grade_panel if self._visible_credit_method == "grade" else self._credit_roster_panel
+        panel.pack(fill="x")
+
+    def _select_credit_grade(self):
+        if self.running:
+            return
+        sel = self.selected()
+        if not sel:
+            return
+        if sel["state"] != "已结束":
+            messagebox.showinfo("提示", "请选择已结束的活动。")
+            return
+        grade = self.cb_credit_grade.get().strip()
+        if grade != "全部" and not re.fullmatch(r"20\d{2}级?", grade):
+            messagebox.showerror("年级错误", "请选择「全部」或输入四位年级，例如 2027级。")
+            return
+        score = self.ent_score.get()
+        try:
+            roster_workflow.parse_score(score)
+        except ValueError as exc:
+            messagebox.showerror("分值错误", str(exc))
+            return
+        want = None if grade == "全部" else grade.removesuffix("级")
+        self._work_result.grid_remove()
+
+        def job():
+            report = work_report.WorkReport(ROOT / "out", "发分", sel["name"], "按年级",
+                                            condition=f"{grade} / {score}分")
+            error, picked = "", []
+            try:
+                backend = roster_device.DeviceBackend(self.connect())
+                backend.check_stop = self._check_stop
+                self._check_stop()
+                backend.open(task="credit", title=sel["name"], score=score)
+                picked = backend.select_credit_grade(want, observe=report.observe)
+            except Exception as exc:
+                error = str(exc)
+                if not isinstance(exc, device_checks.TaskStopped):
+                    self._post(lambda message=error: messagebox.showerror("按年级发分已停止", message))
+                raise
+            finally:
+                state = "本次工作已停止" if error else ("勾选完成，尚未提交" if picked else "本次工作完成")
+                report.finish(state, error or ("请自行在手机上核对人数并完成提交。" if picked else "没有目标年级待发分人员；未提交。"))
+                self._post(self._show_work_result, report.path)
+
+        self.run(job, stoppable=True)
 
     def _sync_workspace_tabs(self, event=None):
         current = self._notebook.index("current")
@@ -641,10 +710,11 @@ class App:
             try:
                 result = roster_workflow.run_task(
                     path, task, title, ROOT / "out", score=score, real=real, confirmed=real,
-                    backend_factory=lambda: roster_workflow.require_backend()(self.connect()))
+                    backend_factory=lambda: roster_workflow.require_backend()(self.connect()),
+                    check_stop=self._check_stop)
                 report.read_feedback(result)
                 error = result.error
-                if result.error:
+                if result.error and not self._stop_event.is_set():
                     self._post(lambda message=result.error: messagebox.showerror("任务未完成", message))
             except Exception as exc:
                 errcatch.record(type(exc), exc, exc.__traceback__, where="名单任务")
@@ -656,7 +726,7 @@ class App:
                               ("正式提交状态请查看人员明细。" if real else "演练结束，未提交。"))
                 self._post(self._show_work_result, report.path)
 
-        self.run(job)
+        self.run(job, stoppable=True)
 
     def _scroll_activity(self, *args):
         """滚动列表后同步状态文字的位置。"""
@@ -684,7 +754,12 @@ class App:
             self._empty_activity.place_forget()
         colors = {"报名中": ("#255ECC", "#EAF1FF"), "已结束": ("#8B5917", "#FCF2DD"),
                   "已完结": ("#53647C", "#EEF2F7")}
+        selection = self.tree.selection()
         for item in items:
+            active = item in selection
+            marker = "当前" if active else "处理"
+            if self.tree.set(item, "todo") != marker:
+                self.tree.set(item, "todo", marker)
             box = self.tree.bbox(item, "state")
             label = self._state_labels.get(item)
             if not box:
@@ -702,6 +777,8 @@ class App:
                     "scroll", -int(event.delta / 120), "units"))
                 self._state_labels[item] = label
             ink, fill = colors.get(state, (self._colors["muted"], "#EEF2F7"))
+            if active:
+                ink, fill = "#FFFFFF", "#2458A6"
             label.configure(text=state, foreground=ink, background=fill)
             x, y, width, height = box
             label.place(x=x + self._ui_px(6), y=y + self._ui_px(9),
@@ -811,10 +888,22 @@ class App:
 
         self.run(worker)
 
-    def run(self, fn):
+    def _request_stop(self):
+        if self.running:
+            self._stop_event.set()
+            self.btn_stop.configure(text="正在停止…", state="disabled")
+            self.write("\n已请求停止：等待当前操作核对结束，保留已勾选人员和工作记录。\n")
+
+    def _check_stop(self):
+        if self._stop_event.is_set():
+            raise device_checks.TaskStopped("用户已停止任务；已完成记录和当前手机勾选保留。")
+
+    def run(self, fn, *, stoppable=False):
         if self.running:
             return
         self.running = True
+        self._stop_event.clear()
+        self.btn_stop.configure(text="停止任务", state="normal" if stoppable else "disabled")
 
         class TaskOutput(io.TextIOBase):
             def write(output, text):
@@ -830,6 +919,8 @@ class App:
                 self.device = None
                 with contextlib.redirect_stdout(TaskOutput()):
                     fn()
+            except device_checks.TaskStopped as exc:
+                self._post(self.write, "\n" + str(exc) + "\n")
             except Exception as exc:
                 self._post(self.write, "\n" + traceback.format_exc())
                 errcatch.record(type(exc), exc, exc.__traceback__, where="任务线程")
@@ -841,10 +932,12 @@ class App:
             threading.Thread(target=job, daemon=True).start()
         except Exception:
             self.running = False
+            self.btn_stop.configure(state="disabled")
             raise
 
     def _done(self, text):
         self.running = False
+        self.btn_stop.configure(text="停止任务", state="disabled")
         self.write(text)
 
     def selected(self):
@@ -913,7 +1006,9 @@ class App:
         self.tree.delete(*self.tree.get_children())
         visible = [r for r in self.rows if r["state"] in ("报名中", "已结束")]
         for i, r in enumerate(visible, 1):
-            self.tree.insert("", "end", values=(i, r["name"], r["state"], "处理"))
+            self.tree.insert("", "end", values=(i, r["name"], r["state"], "处理"),
+                             tags=("plain" if i % 2 else "stripe",))
+        self.tree.after_idle(self._paint_activity_states)
         if not visible:
             self._empty_activity.config(text="没有需要处理的活动")
 
@@ -960,7 +1055,7 @@ class App:
                 d = self.connect()
                 if not makeup.open_unsigned(d, sel["name"]):
                     raise guard.GuardError("没能进入目标活动的未签到列表。")
-                picked = makeup.walk_select(d, want=want, observe=report.observe)
+                picked = makeup.walk_select(d, want=want, observe=report.observe, check_stop=self._check_stop)
                 self._grade_work_path = report.path
             except Exception as exc:
                 error = str(exc)
@@ -970,7 +1065,7 @@ class App:
                 report.finish(state, error or ("请确认后提交补签。" if picked else "没有目标年级待补签人员；未提交。"))
                 self._post(self._show_work_result, report.path)
 
-        self.run(job)
+        self.run(job, stoppable=True)
 
     def _submit_makeup(self):
         if self.running:

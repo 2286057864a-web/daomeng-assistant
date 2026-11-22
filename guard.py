@@ -33,21 +33,29 @@ class GuardError(RuntimeError):
 
 
 def foreground_info(d):
-    """当前前台 {package, activity}；dumpsys 优先，读不到再回退 app_current()。"""
+    """限时读取主屏前台；不调用可能无限等待、返回旧页面的 app_current。"""
     try:
-        out = d.shell("dumpsys window | grep -m1 mCurrentFocus")
+        out = d.shell('dumpsys window | grep -E "Display: mDisplayId|mCurrentFocus"', timeout=5)
         if isinstance(out, (tuple, list)):
             out = out[0]
-        match = FOCUS_RE.search(str(out or ""))
-        if match:
+        out = str(getattr(out, "output", out) or "")
+        display, main_seen, matches = None, False, []
+        for line in out.splitlines():
+            header = re.search(r"Display:\s*mDisplayId=(\d+)", line)
+            if header:
+                display = int(header.group(1))
+                main_seen = main_seen or display == 0
+            match = FOCUS_RE.search(line)
+            if match and display == 0:
+                return {"package": match.group(1), "activity": match.group(2)}
+            if match and display is None:
+                matches.append(match)
+        if not main_seen and len(matches) == 1:
+            match = matches[0]
             return {"package": match.group(1), "activity": match.group(2)}
     except Exception:
         pass
-    try:
-        info = d.app_current() or {}
-        return {"package": info.get("package", ""), "activity": info.get("activity", "")}
-    except Exception:
-        return {"package": "", "activity": ""}
+    return {"package": "", "activity": ""}
 
 
 def foreground(d, timeout=3.0):
@@ -57,11 +65,13 @@ def foreground(d, timeout=3.0):
 
 def ensure_foreground(d, pkg=PKG, tries=8):
     """连续读到前台包名不对就抛错，交给上层停流程。"""
+    current = ""
     for _ in range(tries):
-        if foreground(d) == pkg:
+        current = foreground(d)
+        if current == pkg:
             return True
         time.sleep(0.25)
-    raise GuardError(f"前台不是 {pkg}（当前 {foreground(d) or '读不到'}），已停止")
+    raise GuardError(f"未确认到梦空间处于前台（最后读取：{current or '读不到'}），已停止")
 
 
 def check_target(text=None, id_=None):

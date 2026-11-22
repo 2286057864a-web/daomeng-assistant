@@ -21,6 +21,8 @@ class ContinuousTasks(unittest.TestCase):
     def app(self):
         app = gui.App.__new__(gui.App)
         app.running = False
+        app._stop_event = gui.threading.Event()
+        app.btn_stop = Mock()
         app.device = object()
         app.root = Mock()
         app.lbl_dev = Mock()

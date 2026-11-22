@@ -24,6 +24,10 @@ GRADE_RE = re.compile(r"^(20\d{2})级")
 FOOTER_RE = re.compile(r"补签\s*(\d+)\s*人")
 
 
+class SingleScreenRows(list):
+    """这一帧的人员行全部可见，列表底部留白且不能滚动。"""
+
+
 def parse_snapshot(xml):
     """同一人员容器内绑定姓名、年级、勾选框；残缺行不借用邻行信息。"""
     import xml.etree.ElementTree as ET
@@ -41,7 +45,8 @@ def parse_snapshot(xml):
     footers = by_id(root, "tv_next")
     footer = footers[0].get("text", "") if len(footers) == 1 else ""
     rows = []
-    for listing in by_id(root, "recycleview"):
+    listings = by_id(root, "recycleview")
+    for listing in listings:
         left, top, right, bottom = bounds(listing)
         for name in by_id(listing, "title"):
             if not name.get("text", "").strip():
@@ -74,7 +79,15 @@ def parse_snapshot(xml):
                 if len(names) > 1:
                     break
                 container = parents.get(container)
-    return sorted(rows, key=lambda row: row["cy"]), footer
+    rows.sort(key=lambda row: row["cy"])
+    if rows and len(listings) == 1 and listing.get("scrollable") == "false" and len(listing) == len(rows):
+        # 对照实际行容器。键盘遮住半行、缺字段或有加载占位时，不能只看最后一个可读姓名。
+        boxes = [bounds(child) for child in listing]
+        if (all(len(by_id(child, "title")) == 1 for child in listing)
+                and all(left <= x1 < x2 <= right and top <= y1 < y2 <= bottom for x1, y1, x2, y2 in boxes)
+                and bottom - max(box[3] for box in boxes) >= max(box[3] - box[1] for box in boxes) / 4):
+            rows = SingleScreenRows(rows)
+    return rows, footer
 
 
 def snap(d):
@@ -90,7 +103,7 @@ def _ready_snapshot(d, timeout=30):
         xml = d.dump_hierarchy()
         rows, footer = parse_snapshot(xml)
         loading = 'loading_view' in xml or 'android.widget.ProgressBar' in xml
-        mark = (tuple((r["name"], r["info"], r["cx"], r["cy"]) for r in rows), footer)
+        mark = (tuple((r["name"], r["info"], r["cx"], r["cy"]) for r in rows), footer, isinstance(rows, SingleScreenRows))
         if not loading and count_of(footer) is not None:
             if mark == previous:
                 return rows, footer
@@ -155,7 +168,7 @@ def count_of(footer):
     return int(m.group(1)) if m else None
 
 
-def reset_top(d):
+def reset_top(d, *, check_stop=lambda: None):
     """直接选择未签到，在该列表内回顶，不切到已签到。"""
     guard.ensure_foreground(d)
     tab = d(text="未签到")
@@ -164,10 +177,11 @@ def reset_top(d):
     tab.click()
     previous, unchanged = None, 0
     for _ in range(160):
+        check_stop()
         rows, footer = _ready_snapshot(d)
         mark = tuple((r["name"], r["info"], r["cy"]) for r in rows)
         unchanged = unchanged + 1 if mark == previous else 0
-        if unchanged >= 3:
+        if isinstance(rows, SingleScreenRows) or unchanged >= 3:
             return rows, footer
         previous = mark
         _scroll_people(d, toward_top=True)
@@ -188,6 +202,8 @@ def collect(d, max_scroll=160):
                 order.append(key)
                 fresh += 1
         print(f"  第 {i + 1} 屏：+{fresh} 人（累计 {len(order)}），{footer}")
+        if isinstance(rows, SingleScreenRows):
+            break
         if i > 0 and fresh == 0:
             streak += 1
             if streak >= 3:
@@ -276,18 +292,19 @@ def main(argv=None):
     return 0
 
 
-def walk_select(d, want=None, limit=None, *, observe=None):
+def walk_select(d, want=None, limit=None, *, observe=None, check_stop=lambda: None):
     """边检查边勾选；连续三次下滑没有新人员才结束，每人只点一次。"""
     if want is not None and not re.fullmatch(r"20\d{2}", str(want)):
         raise guard.GuardError("年级格式应为四位年份。")
     _, footer = _ready_snapshot(d)
     if count_of(footer) != 0:
         raise guard.GuardError("当前已有勾选，请先核对或取消，避免混入其他人员。")
-    reset_top(d)
+    reset_top(d, check_stop=check_stop)
     done, seen, unchanged = {}, set(), 0
     count = 0
     print("[..] 起始：已勾 0 人")
     for page in range(160):
+        check_stop()
         rows, footer = _ready_snapshot(d)
         if count_of(footer) != count:
             raise guard.GuardError("补签人数与本轮选择不一致，已停止。")
@@ -301,6 +318,7 @@ def walk_select(d, want=None, limit=None, *, observe=None):
             print("  [OK] 连续三次下滑没有新人员，已到列表末尾")
             break
         for original in rows:
+            check_stop()
             key = (original["name"], original["info"])
             if observe and key not in done:
                 observe(original, "跳过" if want and original["grade"] != want else "未处理",
@@ -314,6 +332,7 @@ def walk_select(d, want=None, limit=None, *, observe=None):
             row = matches[0]
             if observe:
                 observe(row, "点击待核对", "即将点击，需等待勾选人数增加1；尚未提交补签。")
+            check_stop()
             d.click(row["cx"], row["cy"])
             deadline = time.monotonic() + 8
             while time.monotonic() < deadline:
@@ -335,6 +354,9 @@ def walk_select(d, want=None, limit=None, *, observe=None):
                 print(f"[OK] 已达到试跑上限 {limit} 人，未提交")
                 return list(done.values())
         print(f"  第 {page+1} 屏：已检查 {len(seen)} 人，累计勾选 {count} 人")
+        check_stop()
+        if isinstance(rows, SingleScreenRows):
+            break
         _scroll_people(d)
     else:
         raise guard.GuardError("达到扫描上限但未确认列表结束，已停止，不能视为全部勾选完成。")

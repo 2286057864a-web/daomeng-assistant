@@ -88,32 +88,123 @@ def enter_credit(d, keyword: str):
 
 
 def projects(d):
-    """学分管理页的项目列表：项目名 + 积分 + 「颁发」按钮位置。"""
+    """按卡片容器绑定名称、积分和选择状态，兼容旧版单项目页面。"""
     import xml.etree.ElementTree as ET
 
-    xml = d.dump_hierarchy()
-    root = ET.fromstring(xml)
-    names, scores, grant = [], [], []
-    for node in root.iter("node"):
-        rid = node.get("resource-id", "")
-        text = (node.get("text") or "").strip()
-        c = scan.center(node.get("bounds"))
-        if not text or not c:
-            continue
-        if rid.endswith("tv_activity_name"):
-            names.append((text, c[1]))
-        elif rid.endswith("tv_score"):
-            m = SCORE_RE.search(text)
-            scores.append((Decimal(m.group(1)) if m else None, c[1]))
-        elif text == "颁发" or rid.endswith("tv_next"):
-            grant.append((text, c))
+    root = ET.fromstring(d.dump_hierarchy())
+    nodes = list(root.iter("node"))
+    parents = {child: parent for parent in root.iter() for child in parent}
+    scores = {n: Decimal(m.group(1)) for n in nodes
+              if (m := SCORE_RE.fullmatch((n.get("text") or "").strip()))}
+    grants = [n for n in nodes if re.sub(r"\s+", "", n.get("text") or "") == "颁发"
+              and scan.center(n.get("bounds"))]
 
     out = []
-    for name, y in names:
-        score = min(scores, key=lambda s: abs(s[1] - y))[0] if scores else None
-        btn = min(grant, key=lambda g: abs(g[1][1] - y))[1] if grant else None
-        out.append({"name": name, "score": score, "btn": btn})
+    for score_node, score in scores.items():
+        score_pos = scan.center(score_node.get("bounds"))
+        if not score_pos:
+            continue
+        card = parents.get(score_node)
+        while card is not None:
+            children = list(card.iter("node"))
+            if sum(n in scores for n in children) != 1:
+                break  # 不借用同排另一张卡片的名称、积分或选中状态。
+            names = [n for n in children if (n.get("text") or "").strip()
+                     and (pos := scan.center(n.get("bounds"))) and pos[1] < score_pos[1]
+                     and n.get("text").strip() not in ("查看", "颁发")]
+            own_button = next((n for n in grants if n in children), None)
+            if names and (own_button is not None or
+                          card.get("clickable") == "true" and scan.center(card.get("bounds"))):
+                title = next((n for n in names if n.get("resource-id", "").endswith("tv_activity_name")), names[0])
+                checks = [n for n in children if n.get("checkable") == "true"]
+                selected = any(n.get("checked") == "true" for n in checks) if checks else None
+                if not checks:
+                    labels = {n.get("content-desc", "") for n in children}
+                    if labels & {"未选中", "未选择"}:
+                        selected = False
+                    if labels & {"已选中", "已选择", "选中"} or any(n.get("selected") == "true" for n in children):
+                        selected = True
+                button = own_button
+                if button is None and len(grants) == 1:
+                    button = grants[0]
+                out.append(dict(name=title.get("text").strip(), score=score,
+                                card=scan.center(card.get("bounds")) if own_button is None else None,
+                                selected=selected,
+                                marker=next((n.get("bounds") for n in children
+                                             if n.get("resource-id", "").endswith(":id/img_check")), None),
+                                btn=scan.center(button.get("bounds")) if button is not None else None,
+                                enabled=button is not None and button.get("enabled", "true") == "true"))
+                break
+            card = parents.get(card)
+    # 旧版单项目 XML 可能把名称、积分、按钮平铺，只有唯一项目时才可配对。
+    if not out and len(scores) == 1 and len(grants) == 1:
+        names = [n for n in nodes if n.get("resource-id", "").endswith("tv_activity_name")
+                 and (n.get("text") or "").strip()]
+        if len(names) == 1:
+            out.append(dict(name=names[0].get("text").strip(), score=next(iter(scores.values())),
+                            btn=scan.center(grants[0].get("bounds"))))
+    unknown = [p for p in out if p.get("card") and p.get("selected") is None and p.get("marker")]
+    if unknown:
+        try:
+            image = d.screenshot()
+            for project in unknown:
+                box = tuple(int(x) for x in re.findall(r"\d+", project["marker"]))
+                if len(box) != 4 or not (0 <= box[0] < box[2] <= image.width
+                                        and 0 <= box[1] < box[3] <= image.height):
+                    continue
+                crop = image.crop(box).convert("RGB")
+                colors = crop.getcolors(crop.width * crop.height)
+                total = crop.width * crop.height
+                purple = sum(n for n, (r,g,b) in colors if b >= r and r >= g+30 and b >= g+60) / total
+                gray = sum(n for n, (r,g,b) in colors
+                           if max(r,g,b)-min(r,g,b) < 20 and 80 <= r <= 220) / total
+                if purple >= .10:
+                    project["selected"] = True
+                elif purple <= .01 and gray >= .10:
+                    project["selected"] = False
+        except Exception:
+            pass  # 无法辨认颜色时保持未知，禁止继续进入颁发。
     return out
+
+
+def open_project(d, target):
+    """项目选择只进入人员页；共用按钮前必须确认仅目标卡片被选中。"""
+    if not target.get("btn"):
+        raise RuntimeError("该项目没有「颁发」按钮")
+    if not target.get("card"):
+        d.click(*target["btn"])
+        return
+
+    def refresh():
+        items = projects(d)
+        hits = [p for p in items if p["name"] == target["name"] and p["score"] == target["score"]]
+        if len(hits) != 1 or any(p.get("selected") is None for p in items):
+            raise RuntimeError("无法确认积分项目的选中状态，已停止，请导出诊断包。")
+        return items, hits[0]
+
+    def toggle(item, selected):
+        d.click(*item["card"])
+        for _ in range(12):
+            time.sleep(.25)
+            items, _ = refresh()
+            hits = [p for p in items if p["card"] == item["card"]]
+            if len(hits) == 1 and hits[0]["selected"] is selected:
+                return
+        raise RuntimeError("积分项目选中状态未按预期变化，已停止。")
+
+    items, current = refresh()
+    for other in items:
+        if other is not current and other["selected"]:
+            toggle(other, False)
+    items, current = refresh()
+    if not current["selected"]:
+        toggle(current, True)
+    items, current = refresh()
+    if ([p for p in items if p["selected"]] != [current]
+            or not current.get("enabled") or not current.get("btn")):
+        raise RuntimeError("未确认只选中目标积分项目或「颁发」按钮不可用，已停止。")
+    print(f"[核对积分项目] {current['name']}，积分 {current['score']}")
+    d.click(*current["btn"])
 
 
 def select_student(d, sid: str, expect_delta=1):

@@ -14,17 +14,31 @@ from verify_roster import Candidate, FakeBackend, read, workbook
 
 
 class DeviceSearchBackend(FakeBackend):
-    def search(self, query):
+    def search(self, query, *, target_names=()):
         rows = super().search(query)
         backend = roster_device.DeviceBackend(None)
         backend._type_search = lambda query: None
-        backend._collect = lambda: [dict(name=c.name, info="测试班") for c in rows]
+        backend._collect = lambda **kwargs: [dict(name=c.name, info="测试班") for c in rows]
         backend._back_to_top = lambda: None
         return backend.search(query)
 
 
 class CreditIdentityTests(unittest.TestCase):
-    def test_real_search_missing_sid_is_confirmed_by_student_id(self):
+    def test_encountered_duplicate_names_are_reported_without_student_id_search(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            path = workbook(folder/'名单.xlsx', [['姓名','学号'],['陈佳欣','20240000001']])
+            backend = FakeBackend([Candidate('class-a', '陈佳欣', ''),
+                                   Candidate('class-b', '陈佳欣', '')])
+            with contextlib.redirect_stdout(io.StringIO()):
+                result = roster_workflow.run_task(path, 'credit', '目标', folder,
+                    score='3', backend_factory=lambda: backend)
+            self.assertFalse(result.error)
+            self.assertEqual(backend.queries, ['陈'])
+            self.assertEqual(backend.clicks, [])
+            self.assertIn('同名多人', read(result.feedback_path)['演练结果'][1][5])
+
+    def test_exact_name_without_displayed_sid_is_selected_directly(self):
         for task in ("admit", "credit"):
             with self.subTest(task=task), tempfile.TemporaryDirectory() as tmp:
                 folder = Path(tmp)
@@ -37,18 +51,18 @@ class CreditIdentityTests(unittest.TestCase):
                     result = roster_workflow.run_task(path, task, "目标", folder,
                         score="0.5", backend_factory=lambda: backend)
                 self.assertFalse(result.error)
-                self.assertEqual(backend.queries, ["李", "张", "20230000001", "20230000002"])
+                self.assertEqual(backend.queries, ["李", "张"])
                 self.assertEqual(len(backend.clicks), 2)
                 self.assertFalse(backend.selected)
                 self.assertFalse(backend.submissions)
                 self.assertTrue(all("演练勾选" in row[5] for row in read(result.feedback_path)["演练结果"][1:]))
 
-    def test_fallback_wrong_student_id_does_not_select_or_stop_later_people(self):
+    def test_missing_full_name_does_not_select_or_stop_later_people(self):
         with tempfile.TemporaryDirectory() as tmp:
             folder = Path(tmp)
             path = workbook(folder / "名单.xlsx", [["姓名", "学号"],
                 ["李甲", "20230000001"], ["张乙", "20230000002"]])
-            backend = DeviceSearchBackend([Candidate("wrong", "李甲", "20230000009"),
+            backend = DeviceSearchBackend([Candidate("wrong", "李乙", "20230000009"),
                                            Candidate("right", "张乙", "20230000002")])
             with patch.object(roster_workflow, "wait_count", side_effect=lambda fn, **kw: fn()), \
                  contextlib.redirect_stdout(io.StringIO()):

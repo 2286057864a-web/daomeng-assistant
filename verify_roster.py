@@ -62,17 +62,19 @@ class FakeBackend:
         assert not self.selected
         self.queries.append(query)
 
-    def search(self, query):
+    def search(self, query, *, target_names=()):
         mode = rp.search_kind(query)
-        return [c for c in self.candidates if (c.sid == query if mode == "sid" else c.name.startswith(query))]
+        return [c for c in self.candidates if (c.sid == query if mode == "sid" else query in c.name)]
 
     def count(self):
         return len(self.selected)
 
-    def select(self, key):
+    def select(self, key, *, expected_before=None):
+        assert expected_before is None or self.count() == expected_before
         self.clicks.append(key)
         if not self.bad_delta:
             self.selected.append(key)
+        return self.count()
 
     def clear_selection(self):
         if not self.bad_clear:
@@ -152,8 +154,8 @@ def main(_wait):
         assert match_person(person, [a], person.sid)[0] == a
         assert match_person(person, [a, a], person.sid)[1] == "失败"
         assert match_person(person, [Candidate("x", "李四", person.sid)], person.sid)[1] == "失败"
-        assert match_person(person, [Candidate("x", person.name, "")], "张")[1] == "失败"
-        print("[OK] 精确姓名学号匹配、同名歧义/缺少身份不勾选")
+        assert match_person(person, [Candidate("x", person.name, "")], "张")[0].key == "x"
+        print("[OK] 姓氏查询按完整姓名匹配、学号查询核对姓名、同名歧义不勾选")
 
         people = [Candidate(str(i), "张" + c, f"202300000{i:02}") for i, c in enumerate("甲乙丙丁戊己庚辛壬癸子丑", 1)]
         three = workbook(root / "三人.xlsx", [["姓名", "学号", "分值"]] + [[p.name, p.sid, "999"] for p in people[:3]])
@@ -172,9 +174,9 @@ def main(_wait):
                 real = FakeBackend(people)
                 result = run_task(three, task, "演示", root, score="0.5", real=True, confirmed=True, backend_factory=lambda: real)
                 assert not result.error and result.submitted == 3
-                assert result.confirmed == (0 if task == "credit" else 3)
+                assert result.confirmed == (3 if task == "makeup" else 0)
                 rows = read(result.feedback_path)["反馈"][1:]
-                assert {r[4] for r in rows} == {{"credit": "已提交未核查", "admit": "已录取", "makeup": "已补签"}[task]}
+                assert {r[4] for r in rows} == {{"credit": "已提交未核查", "admit": "已提交未核查", "makeup": "已补签"}[task]}
                 if task == "credit":
                     assert all(p["score"] == "0.5" for group, score in real.submissions for p in group)
                     assert all(score == "0.5" for group, score in real.submissions)
@@ -206,12 +208,12 @@ def main(_wait):
         backend = FakeBackend([Candidate("a", "张伟", "20230000001"), Candidate("b", "张伟", "20240000001")])
         with redirect_stdout(StringIO()):
             result = run_task(duplicates, "credit", "演示", root, score="0.5", backend_factory=lambda: backend)
-        assert not result.error and backend.queries == ["20230000001", "20240000001"]
+        assert not result.error and not backend.queries and not backend.clicks
         full_backend = FakeBackend([Candidate(str(i), p.name, p.sid) for i, p in enumerate(plan.people)])
         with redirect_stdout(StringIO()):
             result = run_task(path, "credit", "演示", root, score="0.5", backend_factory=lambda: full_backend)
-        assert not result.error and len(full_backend.clicks) == 7
-        assert full_backend.queries == ["邓", "李", "区", "张", "20230000002", "20240000002"]
+        assert not result.error and len(full_backend.clicks) == 4
+        assert full_backend.queries == ["邓", "区", "张"]
         empty = workbook(root / "空名单.xlsx", [["姓名", "学号"], ["", "错误"]])
         with redirect_stdout(StringIO()):
             result = run_task(empty, "credit", "演示", root, score="0.5",
@@ -225,7 +227,7 @@ def main(_wait):
             result = run_task(mixed, "admit", "演示", root, real=True, confirmed=True,
                               backend_factory=lambda: FakeBackend(people))
         sheets = read(result.feedback_path)
-        assert result.confirmed == 3 and len(sheets["反馈"]) == 7
+        assert not result.error and result.submitted == 3 and result.confirmed == 0 and len(sheets["反馈"]) == 7
         assert len(sheets["待核对"]) == 4
         assert all(row[4] == "未找到" for row in sheets["待核对"][1:])
         names20 = ["张"+c for c in "甲乙丙丁戊己庚辛壬癸子丑寅卯辰巳午未申酉"]
@@ -243,7 +245,7 @@ def main(_wait):
         wb = load_workbook(feedback)
         assert wb.active["F2"].data_type == "s"
         wb.close()
-        print("[OK] 同名表自动转学号路径、反馈文字不会成为公式")
+        print("[OK] 录取发分跳过名单重名、反馈文字不会成为公式")
     print("全部通过（离线逻辑验收，不代表真机提交已验收）。")
 
 

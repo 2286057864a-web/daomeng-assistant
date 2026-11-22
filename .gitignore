@@ -19,3 +19,7 @@ platform-tools/
 *.p12
 *.key
 
+
+# Synthetic regression fixtures
+!tests/fixtures/**/*.xml
+!tests/fixtures/*.xml

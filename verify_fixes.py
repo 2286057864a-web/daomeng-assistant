@@ -10,7 +10,6 @@ import xml.etree.ElementTree as ET
 
 import device_checks as dc
 import roster_workflow as flow
-from submission_log import check_previous
 from verify_roster import Candidate, FakeBackend, read, workbook
 
 
@@ -41,8 +40,8 @@ def main():
         assert read(result.feedback_path)["反馈"][1][4] == "已提交未核查"
         assert len(read(result.feedback_path)["待核对"]) == 1
         retry = run(path, root / "direct", backend, score="0.50")
-        assert "阻止再次提交" in retry.error and len(backend.submissions) == 1
-        print("[OK] 缺 toast/人数增量不阻断正式发分，明确未核查；等价分值重复提交被拦截")
+        assert not retry.error and len(backend.submissions) == 2
+        print("[OK] 缺 toast/人数增量不阻断正式发分，明确未核查；用户再次运行不受历史记录拦截")
 
         class DelayedFooter(NoToast):
             def count(self):
@@ -65,7 +64,7 @@ def main():
         print("[OK] 加载完成后才读人数；勾选后等待真实 +1；断连错误立即停止")
 
         class Unfiltered(NoToast):
-            def search(self, query):
+            def search(self, query, *, target_names=()):
                 return self.candidates
 
         unfiltered = Unfiltered([person, Candidate("b", "李乙", "20230000002")])
@@ -85,9 +84,11 @@ def main():
         assert row[4] == "提交结果待核对" and "直接重试" in row[5]
         assert len(read(result.feedback_path)["待核对"]) == 2
         assert json.loads(next((root / "timeout/提交记录").glob("*.json")).read_text(encoding="utf-8"))["state"] == "提交结果待核对"
-        retry = run(path, root / "timeout", backend)
-        assert "阻止再次提交" in retry.error and len(backend.submissions) == 1
-        print("[OK] 提交后导航异常保留待核对状态，无重复 submit；下次运行仍拦截")
+        assert len(backend.submissions) == 1
+        retry_backend = TimeoutAfterSubmit([person])
+        retry = run(path, root / "timeout", retry_backend)
+        assert "可能已经提交" in retry.error and len(retry_backend.submissions) == 1
+        print("[OK] 提交后异常保留待核对状态，单次任务无重复 submit；允许用户重新运行")
 
         class Crash(BaseException):
             pass
@@ -108,8 +109,9 @@ def main():
             pass
         else:
             raise AssertionError("退出模拟未触发")
-        retry = run(path, root / "crash", backend)
-        assert "阻止再次提交" in retry.error
+        retry = run(path, root / "crash", NoToast([person]))
+        assert not retry.error and retry.submitted == 1
+        assert len(list((root / "crash/提交记录").glob("*.json"))) == 2
         failure = NoToast([person])
         with patch("submission_log.atomic_json", side_effect=PermissionError("写盘失败")):
             result = run(path, root / "disk", failure)
@@ -121,9 +123,16 @@ def main():
                 super().submit(**kwargs)
                 return flow.Receipt((), 0, 1, submitted=True)
 
-        result = run(path, root / "admit", WrongReceipt([person]), task="admit")
+        second = Candidate("b", "李乙", "20230000002")
+        two = workbook(root / "两组.xlsx", [["姓名"], [person.name], [second.name]])
+        admissions = NoToast([person, second])
+        result = run(two, root / "admit", admissions, task="admit")
+        assert not result.error and result.submitted == 2 and result.confirmed == 0
+        assert len(admissions.submissions) == 2 and sorted(admissions.queries) == sorted(["张", "李"])
+        assert [row[4] for row in read(result.feedback_path)["反馈"][1:]] == ["已提交未核查"] * 2
+        result = run(path, root / "makeup", WrongReceipt([person]), task="makeup")
         assert "提交结果待核对" in result.error
-        print("[OK] 录取/名单补签继续复核；复核不一致也不等同于未提交失败")
+        print("[OK] 录取提交后直接处理下一组；名单补签仍须复核人员与人数")
 
         class FailReturning(NoToast):
             def end_group(self):

@@ -97,7 +97,7 @@ class ReportedBugs(unittest.TestCase):
         events = []
         app = SimpleNamespace(running=False, selected=lambda: {"name": "10月30日上午", "state": "已结束"},
                               cb_grade=SimpleNamespace(get=lambda: "2040级"), connect=lambda: "device",
-                              run=lambda fn: fn(), _work_result=Mock(), _post=Mock(), _show_work_result=Mock())
+                              run=lambda fn, **kw: fn(), _check_stop=lambda: None, _work_result=Mock(), _post=Mock(), _show_work_result=Mock())
         with patch.object(makeup, "open_unsigned", side_effect=lambda *a: events.append(("open", a)) or True), \
              patch.object(gui.work_report, "WorkReport"), \
              patch.object(makeup, "walk_select", side_effect=lambda *a, **kw: events.append(("walk", kw["want"]))):
@@ -138,7 +138,8 @@ class ReportedBugs(unittest.TestCase):
                     self.assertIn("实际任务异常", z.read("out/gui-最近200行.log").decode("utf8"))
 
     def test_task_output_is_queued_before_completion_and_failure_recorded(self):
-        app = SimpleNamespace(running=False, _q=queue.Queue(), write=Mock(), _done=Mock())
+        app = SimpleNamespace(running=False, _q=queue.Queue(), write=Mock(), _done=Mock(),
+                              _stop_event=gui.threading.Event(), btn_stop=Mock())
         app._post = lambda fn, *args: app._q.put((fn, args))
         class ImmediateThread:
             def __init__(self, target, **kw): self.target = target

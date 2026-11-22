@@ -169,15 +169,17 @@ def wait_loaded(d, timeout=15.0):
         except Exception:
             time.sleep(0.4)
             continue
-        if cards(xml) and "ProgressBar" not in xml:
-            return True
+        if "ProgressBar" not in xml and cards(xml):
+            return xml
         time.sleep(0.4)
-    print("  [..] 列表一直没加载完，继续尝试读取")
+    print("  [..] 等待活动列表加载超时")
     return False
 
 
-def _scroll_activities(d):
-    nodes = [n for n in ET.fromstring(d.dump_hierarchy()).iter("node")
+def _scroll_activities(d, xml=None, pause=1.3):
+    if xml is None:
+        xml = d.dump_hierarchy()
+    nodes = [n for n in ET.fromstring(xml).iter("node")
              if n.get("resource-id", "").endswith(":id/gridview_activitys")]
     if len(nodes) != 1:
         raise guard.GuardError("没有唯一活动列表，已停止滚动。")
@@ -188,7 +190,7 @@ def _scroll_activities(d):
     start, end = int(y1+(y2-y1)*.75), int(y1+(y2-y1)*.40)
     guard.ensure_foreground(d)
     d.swipe((x1+x2)//2, start, (x1+x2)//2, end, .45)
-    time.sleep(1.3)
+    time.sleep(pause)
 
 
 def _search_activities(d, query):
@@ -201,8 +203,10 @@ def _search_activities(d, query):
     box.set_text(query)
     button.click()
     time.sleep(1.3)
-    if not wait_loaded(d):
+    xml = wait_loaded(d)
+    if not xml:
         raise guard.GuardError("活动搜索结果未加载完成，请检查网络或搜索条件。")
+    return xml
 
 
 def reset_list_top(d):
@@ -217,7 +221,7 @@ def reset_list_top(d):
     time.sleep(.8)
     guard.ensure_foreground(d)
     navigate(d)
-    _search_activities(d, "")
+    return _search_activities(d, "")
 
 
 def open_activity(d, keyword):
@@ -242,24 +246,33 @@ def open_activity(d, keyword):
     raise guard.GuardError(f"列表里没找到「{keyword}」及其管理按钮。")
 
 
-def scan(d, max_scroll=30, pause=0.9):
+def scan(d, max_scroll=30, pause=0.4):
     """逐屏向下读卡片，按活动名合并；见到第一个「已完结」就停。"""
     merged, order = {}, []
-    reset_list_top(d)
-    wait_loaded(d)
-    _scan_pass(d, merged, order, max_scroll, pause)
+    first_page = reset_list_top(d)
+    _scan_pass(d, merged, order, max_scroll, pause, first_page)
     # 只保留到第一个「已完结」为止（同一屏里它后面的卡片也一并截掉）
     cut = next((i for i, key in enumerate(order) if merged[key]["state"] == "已完结"), len(order))
     order = order[: cut + 1]
     return [merged[k] for k in order if merged[k]["state"] in ("报名中", "已结束")]
 
 
-def _scan_pass(d, merged, order, max_scroll, pause):
+def _scan_pass(d, merged, order, max_scroll, pause, xml):
     streak = 0
     for i in range(max_scroll + 1):
         guard.ensure_foreground(d)
         fresh = 0
-        for c in cards(d.dump_hierarchy()):
+        page = cards(xml)
+        if i and all(row["name"] in merged and all(
+                not row[field] or row[field] == merged[row["name"]][field] for field in ("state", "where"))
+                for row in page):
+            # 翻页后可能暂时仍显示上一屏，稍候复读，再判断是否到底。
+            time.sleep(1.3)
+            xml = wait_loaded(d)
+            if not xml:
+                raise guard.GuardError("活动列表未加载完成，请重新扫描。")
+            page = cards(xml)
+        for c in page:
             key = c["name"]
             if key not in merged:
                 merged[key] = dict(c)
@@ -276,10 +289,15 @@ def _scan_pass(d, merged, order, max_scroll, pause):
         if any(item["state"] == "已完结" for item in merged.values()):
             print("  已读到第一个「已完结」，后面的都是已完结，停止扫描")
             break
-        if i == max_scroll or streak >= 2:
+        if streak >= 2:
             break
-        _scroll_activities(d)
-        time.sleep(pause)
+        if i == max_scroll:
+            print(f"  已达到 {max_scroll} 次翻页上限，活动列表可能未扫描完整。")
+            break
+        _scroll_activities(d, xml, pause)
+        xml = wait_loaded(d)
+        if not xml:
+            raise guard.GuardError("活动列表未加载完成，请重新扫描。")
 
 
 def render(rows):

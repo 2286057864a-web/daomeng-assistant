@@ -1,4 +1,4 @@
-"""提交前持久化、保守拦截重复任务；不依赖手机或 GUI。"""
+"""保存每次任务的提交意图和结果；不依赖手机或 GUI。"""
 import json
 import os
 from datetime import datetime
@@ -18,28 +18,6 @@ def atomic_json(path, data):
         os.replace(temporary, path)
     finally:
         temporary.unlink(missing_ok=True)
-
-
-def check_previous(out_dir, task, title, score, identities):
-    """同活动同任务同分值，有重叠身份则停止；旧年级任务缺身份时按活动拦截。"""
-    def key(identity):
-        name, sid = identity
-        return ("sid", sid) if sid else ("name", name)
-
-    wanted = set(map(key, identities)) if identities is not None else None
-    for path in sorted((Path(out_dir) / "提交记录").glob("*.json")):
-        try:
-            entry = json.loads(path.read_text(encoding="utf-8"))
-            if entry["version"] != 1:
-                raise ValueError("不支持的记录版本")
-            if (entry["task"], entry["title"], entry["score"]) != (task, title, score):
-                continue
-            previous = entry["identities"]
-            overlap = wanted is None or previous is None or wanted.intersection(map(key, previous))
-        except (ValueError, KeyError, TypeError) as exc:
-            raise RuntimeError(f"提交记录损坏，不能确认是否重复提交：{path}") from exc
-        if overlap:
-            raise RuntimeError(f"发现同活动人员的历史提交记录，已阻止再次提交：{path}。请先人工核对手机；未确认的记录不要删除。")
 
 
 class SubmissionLog:

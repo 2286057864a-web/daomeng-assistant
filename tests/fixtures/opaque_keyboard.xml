@@ -1,0 +1,77 @@
+<hierarchy><node index="0" text="" resource-id="" class="android.widget.FrameLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,3200]" drawing-order="0" hint="" display-id="0">
+
+    <node index="0" text="" resource-id="" class="android.widget.FrameLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,3200]" drawing-order="2" hint="" display-id="0" />
+
+    <node index="1" text="" resource-id="" class="android.widget.LinearLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,3200]" drawing-order="1" hint="" display-id="0">
+
+      <node index="0" text="" resource-id="android:id/content" class="android.widget.FrameLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,3200]" drawing-order="2" hint="" display-id="0">
+
+        <node index="0" text="" resource-id="android:id/parentPanel" class="android.widget.LinearLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,3200]" drawing-order="1" hint="" display-id="0">
+
+          <node index="0" text="" resource-id="android:id/fullscreenArea" class="android.widget.LinearLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,2136]" drawing-order="1" hint="" display-id="0">
+
+            <node index="0" text="" resource-id="android:id/candidatesArea" class="android.widget.FrameLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,2136]" drawing-order="2" hint="" display-id="0">
+
+              <node index="0" text="" resource-id="" class="android.widget.FrameLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,2136]" drawing-order="1" hint="" display-id="0">
+
+                <node index="0" text="" resource-id="" class="android.widget.LinearLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,2136]" drawing-order="1" hint="" display-id="0">
+
+                  <node index="1" text="" resource-id="" class="android.widget.LinearLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,2136]" drawing-order="2" hint="" display-id="0">
+
+                    <node index="1" text="" resource-id="" class="android.view.View" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="true" password="false" selected="false" visible-to-user="true" bounds="[0,1962][1440,2136]" drawing-order="2" hint="" display-id="0" />
+
+                  </node>
+
+                </node>
+
+              </node>
+
+            </node>
+
+          </node>
+
+          <node index="1" text="" resource-id="android:id/inputArea" class="android.widget.FrameLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,2136][1440,2994]" drawing-order="2" hint="" display-id="0">
+
+            <node index="0" text="" resource-id="" class="android.widget.FrameLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,2136][1440,2994]" drawing-order="1" hint="" display-id="0">
+
+              <node index="0" text="" resource-id="" class="android.view.View" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,2136][1440,2994]" drawing-order="1" hint="" display-id="0" />
+
+            </node>
+
+          </node>
+
+          <node index="2" text="" resource-id="android:id/miui_bottom_area" class="android.widget.FrameLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,2994][1440,3200]" drawing-order="3" hint="" display-id="0">
+
+            <node index="0" text="" resource-id="" class="android.widget.RelativeLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,2994][1440,3200]" drawing-order="1" hint="" display-id="0">
+
+              <node index="0" text="" resource-id="" class="android.widget.RelativeLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,2994][1440,3200]" drawing-order="1" hint="" display-id="0">
+
+                <node index="0" text="" resource-id="com.miui.phrase:id/input_bottom_view" class="android.widget.RelativeLayout" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="true" password="false" selected="false" visible-to-user="true" bounds="[0,2994][1440,3200]" drawing-order="1" hint="" display-id="0" />
+
+                <node index="1" text="" resource-id="com.miui.phrase:id/input_bottom_layout_left" class="android.widget.LinearLayout" package="com.baidu.input_mi" content-desc="切换输入法" checkable="false" checked="false" clickable="true" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="true" password="false" selected="false" visible-to-user="true" bounds="[98,2994][309,3200]" drawing-order="4" hint="" display-id="0">
+
+                  <node index="0" text="" resource-id="com.miui.phrase:id/input_bottom_button_left" class="android.widget.ImageView" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[98,3039][211,3152]" drawing-order="1" hint="" display-id="0" />
+
+                </node>
+
+                <node index="2" text="" resource-id="com.miui.phrase:id/input_bottom_layout_right" class="android.widget.LinearLayout" package="com.baidu.input_mi" content-desc="剪贴板和常用语" checkable="false" checked="false" clickable="true" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="true" password="false" selected="false" visible-to-user="true" bounds="[1131,2994][1342,3200]" drawing-order="9" hint="" display-id="0">
+
+                  <node index="0" text="" resource-id="com.miui.phrase:id/input_bottom_button_right" class="android.widget.ImageView" package="com.baidu.input_mi" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[1229,3039][1342,3152]" drawing-order="1" hint="" display-id="0" />
+
+                </node>
+
+              </node>
+
+            </node>
+
+          </node>
+
+        </node>
+
+      </node>
+
+    </node>
+
+  </node>
+
+  </hierarchy>

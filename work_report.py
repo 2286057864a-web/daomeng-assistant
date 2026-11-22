@@ -5,11 +5,16 @@ import json
 from pathlib import Path
 
 from openpyxl import Workbook, load_workbook
+from openpyxl.styles import Alignment, Font, PatternFill
 from roster_plan import _append, _save
 from submission_log import atomic_json
 
 HEADER = ["序号", "姓名", "学号", "班级／分组", "结果", "说明", "时间"]
-PENDING = {"未找到", "失败", "未处理", "点击待核对", "提交结果待核对", "已提交未核查"}
+EXCEPTION_COLORS = {
+    "未找到": "FFF2CC", "重名跳过": "E6D9F5", "跳过": "E2E8F0",
+    "失败": "F8CECC", "未处理": "FCE4D6", "已勾选未提交": "DDEBF7",
+    "演练未提交": "E2F0F5", "点击待核对": "FBE2C5", "提交结果待核对": "F4C6D7",
+}
 
 
 class WorkReport:
@@ -115,12 +120,27 @@ def export_report(path, destination):
         _append(summary, ["已提交未核查人数", data["submitted_count"]])
     for status, count in Counter(r[4] for r in data["rows"]).items():
         _append(summary, [status, count])
+    exceptions = [row for row in data["rows"] if row[4] in EXCEPTION_COLORS]
+    _append(summary, [])
+    _append(summary, [f"异常及未执行人员（{len(exceptions)} 条）"])
+    summary.cell(summary.max_row, 1).font = Font(bold=True, color="203864")
+    _append(summary, ["姓名", "具体原因", "工作状态", "学号", "班级／分组", "原序号"])
+    header_row = summary.max_row
+    for cell in summary[header_row]:
+        cell.font = Font(bold=True, color="FFFFFF")
+        cell.fill = PatternFill("solid", fgColor="365675")
+    for seq, name, sid, group, status, reason, _ in exceptions:
+        _append(summary, [name, reason, status, sid, group, seq])
+        for cell in summary[summary.max_row]:
+            cell.fill = PatternFill("solid", fgColor=EXCEPTION_COLORS[status])
+            cell.alignment = Alignment(vertical="center", wrap_text=True)
+    summary.auto_filter.ref = f"A{header_row}:F{summary.max_row}"
     detail = wb.create_sheet("人员明细")
     pending = wb.create_sheet("待核对人员")
     for ws in (detail, pending):
         _append(ws, HEADER)
     for row in data["rows"]:
         _append(detail, row)
-        if row[4] in PENDING:
-            _append(pending, row)
+    for row in exceptions:
+        _append(pending, row)
     return _save(wb, output)

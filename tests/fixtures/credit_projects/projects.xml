@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='utf8'?>
+<hierarchy><node index="1" text="" resource-id="com.jingcai.apps.qualitydev:id/loaddingLayout" class="android.widget.FrameLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,371][1440,3125]" drawing-order="2" hint="" display-id="0">
+
+                  <node index="0" text="" resource-id="" class="android.widget.LinearLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,371][1440,3125]" drawing-order="5" hint="" display-id="0">
+
+                    <node index="0" text="" resource-id="com.jingcai.apps.qualitydev:id/smartlayout" class="android.view.ViewGroup" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,371][1440,2927]" drawing-order="1" hint="" display-id="0">
+
+                      <node index="1" text="" resource-id="com.jingcai.apps.qualitydev:id/creditview" class="android.widget.GridView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,371][1440,955]" drawing-order="1" hint="" display-id="0">
+
+                        <node index="0" text="" resource-id="" class="android.widget.LinearLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="true" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[57,428][692,898]" drawing-order="1" hint="" display-id="0">
+
+                          <node index="0" text="" resource-id="" class="android.widget.FrameLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[65,436][684,890]" drawing-order="1" hint="" display-id="0">
+
+                            <node index="0" text="" resource-id="" class="android.widget.RelativeLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[111,482][638,844]" drawing-order="1" hint="" display-id="0">
+
+                              <node index="0" text="社会实践与社会工作" resource-id="com.jingcai.apps.qualitydev:id/title" class="android.widget.TextView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[111,501][588,572]" drawing-order="1" hint="" display-id="0" />
+
+                              <node index="1" text="" resource-id="com.jingcai.apps.qualitydev:id/img_check" class="android.widget.ImageView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[516,505][638,566]" drawing-order="2" hint="" display-id="0" />
+
+                              <node index="2" text="积分 3.0" resource-id="com.jingcai.apps.qualitydev:id/tv_score" class="android.widget.TextView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[111,648][638,708]" drawing-order="3" hint="" display-id="0" />
+
+                              <node index="3" text="名额 500" resource-id="com.jingcai.apps.qualitydev:id/content" class="android.widget.TextView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[111,784][296,844]" drawing-order="4" hint="" display-id="0" />
+
+                              <node index="4" text="已颁发 0" resource-id="com.jingcai.apps.qualitydev:id/number" class="android.widget.TextView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[462,784][638,844]" drawing-order="5" hint="" display-id="0" />
+
+                            </node>
+
+                          </node>
+
+                        </node>
+
+                        <node index="1" text="" resource-id="" class="android.widget.LinearLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="true" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[748,428][1383,898]" drawing-order="2" hint="" display-id="0">
+
+                          <node index="0" text="" resource-id="" class="android.widget.FrameLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[756,436][1375,890]" drawing-order="1" hint="" display-id="0">
+
+                            <node index="0" text="" resource-id="" class="android.widget.RelativeLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[802,482][1329,844]" drawing-order="1" hint="" display-id="0">
+
+                              <node index="0" text="社会实践与社会工作" resource-id="com.jingcai.apps.qualitydev:id/title" class="android.widget.TextView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[802,501][1279,572]" drawing-order="1" hint="" display-id="0" />
+
+                              <node index="1" text="" resource-id="com.jingcai.apps.qualitydev:id/img_check" class="android.widget.ImageView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[1207,505][1329,566]" drawing-order="2" hint="" display-id="0" />
+
+                              <node index="2" text="积分 2.0" resource-id="com.jingcai.apps.qualitydev:id/tv_score" class="android.widget.TextView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[802,648][1329,708]" drawing-order="3" hint="" display-id="0" />
+
+                              <node index="3" text="名额 1500" resource-id="com.jingcai.apps.qualitydev:id/content" class="android.widget.TextView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[802,784][1005,844]" drawing-order="4" hint="" display-id="0" />
+
+                              <node index="4" text="已颁发 0" resource-id="com.jingcai.apps.qualitydev:id/number" class="android.widget.TextView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[1153,784][1329,844]" drawing-order="5" hint="" display-id="0" />
+
+                            </node>
+
+                          </node>
+
+                        </node>
+
+                      </node>
+
+                    </node>
+
+                    <node index="1" text="" resource-id="com.jingcai.apps.qualitydev:id/bottom_navigation" class="android.widget.LinearLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,2927][1440,3125]" drawing-order="2" hint="" display-id="0">
+
+                      <node index="0" text="" resource-id="" class="android.view.View" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,2927][1440,2931]" drawing-order="1" hint="" display-id="0" />
+
+                      <node index="1" text="" resource-id="" class="android.widget.LinearLayout" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,2931][1440,3095]" drawing-order="2" hint="" display-id="0">
+
+                        <node index="0" text="查 看" resource-id="com.jingcai.apps.qualitydev:id/tv_step" class="android.widget.TextView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="true" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,2931][718,3095]" drawing-order="1" hint="" display-id="0" />
+
+                        <node index="1" text="" resource-id="com.jingcai.apps.qualitydev:id/view_line" class="android.view.View" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[718,2984][722,3041]" drawing-order="2" hint="" display-id="0" />
+
+                        <node index="2" text="颁 发" resource-id="com.jingcai.apps.qualitydev:id/tv_next" class="android.widget.TextView" package="com.jingcai.apps.qualitydev" content-desc="" checkable="false" checked="false" clickable="true" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[722,2931][1440,3095]" drawing-order="3" hint="" display-id="0" />
+
+                      </node>
+
+                    </node>
+
+                  </node>
+
+                </node>
+
+              </hierarchy>

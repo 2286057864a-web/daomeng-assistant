@@ -3,11 +3,19 @@ import re
 import time
 import xml.etree.ElementTree as ET
 
-from submission_log import SubmissionLog, check_previous
+from submission_log import SubmissionLog
 
 
 class PageNotReady(RuntimeError):
     """适配器仅在页面加载/底栏尚未出现时抛出；断连、错页不能用此异常。"""
+
+
+class TaskStopped(RuntimeError):
+    """用户请求在当前操作核对完成后停止。"""
+
+
+class SubmissionNotSent(RuntimeError):
+    """已识别补签确认框，但在最终确认前停止，未发出提交。"""
 
 
 def wait_count(read, timeout=30, interval=.2, expected=None):
@@ -54,7 +62,6 @@ def submit_selected_makeup(device, title, out_dir, *, timeout=30, interval=.2):
     """
     import guard
 
-    check_previous(out_dir, "makeup", title, None, None)
     last_nodes = []
 
     def read_count():
@@ -80,6 +87,7 @@ def submit_selected_makeup(device, title, out_dir, *, timeout=30, interval=.2):
     record = SubmissionLog(out_dir, "makeup", title, None, None)
     record.data["count"] = count
     record.save()
+    confirmation_attempted = False
     try:
         device.click(*position)
         deadline = time.monotonic() + timeout
@@ -94,11 +102,16 @@ def submit_selected_makeup(device, title, out_dir, *, timeout=30, interval=.2):
                     raise RuntimeError("无法确认弹窗属于本次补签，未点击确定。")
                 counts = re.findall(r"(?:已)?选中(?:的)?\s*(\d+)\s*人|补签\s*(\d+)\s*人", messages[0])
                 if not counts or any(int(a or b) != count for a, b in counts):
+                    if not confirmation_attempted:
+                        raise SubmissionNotSent("补签确认框选中人数无法核对，未点击确定。")
                     raise RuntimeError("补签确认框选中人数无法核对，未点击确定。")
                 mark = (messages[0], dialogs[0].get("bounds"))
                 stable = stable + 1 if mark == previous else 1
                 previous = mark
                 if stable >= 3 and not confirmed:
+                    confirmation_attempted = True
+                    record.data["submission_attempted"] = True
+                    record.save()  # 确认点击前持久化；点击报错也不能当成未提交。
                     device.click(*_center(dialogs[0]))
                     confirmed = True
                     previous, stable = None, 0
@@ -121,6 +134,10 @@ def submit_selected_makeup(device, title, out_dir, *, timeout=30, interval=.2):
                     previous, stable = None, 0
             time.sleep(interval)
         raise RuntimeError("补签点击后未能确认页面状态，未重试点击。")
+    except SubmissionNotSent as exc:
+        record.data["submission_attempted"] = False
+        record.save("未提交", str(exc))
+        raise RuntimeError(f"未提交：{exc}\n请在手机核对当前确认框。提交记录：{record.path}") from exc
     except Exception as exc:
         note = f"提交结果待核对：可能已经补签，禁止直接重试。{exc}"
         record.save("提交结果待核对", note)

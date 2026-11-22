@@ -22,7 +22,7 @@ class WorkReportTests(unittest.TestCase):
             source = workbook(folder / "输入.xlsx", [["姓名", "学号"], ["张甲", "20230000001"]])
             app = SimpleNamespace(running=False, ent_score=SimpleNamespace(get=lambda: "0.5"),
                 roster=source, admit_roster=None, makeup_roster=None, selected=lambda: dict(name="测试", state="已结束"),
-                _work_result=Mock(), run=lambda job: job(), _post=lambda fn, *args: fn(*args),
+                _work_result=Mock(), run=lambda job, **kw: job(), _check_stop=lambda: None, _stop_event=gui.threading.Event(), _post=lambda fn, *args: fn(*args),
                 connect=Mock(side_effect=RuntimeError("设备未连接")), _show_work_result=Mock())
             with patch.object(gui, "ROOT", folder), patch.object(gui.messagebox, "showerror"), \
                  contextlib.redirect_stdout(io.StringIO()):
@@ -43,7 +43,7 @@ class WorkReportTests(unittest.TestCase):
             self.assertEqual(work_report.read_report(different)["rows"], [])
             self.assertEqual(work_report.read_report(report.path)["rows"][0][4], "已勾选未提交")
             app = SimpleNamespace(running=False, selected=lambda: dict(name="测试", state="已结束"),
-                _grade_work_path=report.path, _work_result=Mock(), run=lambda job: job(),
+                _grade_work_path=report.path, _work_result=Mock(), run=lambda job, **kw: job(), _check_stop=lambda: None, _stop_event=gui.threading.Event(),
                 _post=lambda fn, *args: fn(*args), connect=lambda: "offline", _show_work_result=Mock())
             with patch.object(gui, "ROOT", Path(tmp)), patch.object(gui.messagebox, "askyesno", return_value=True), \
                  patch.object(gui.device_checks, "submit_selected_makeup", return_value=(1, "record.json")), \
@@ -78,7 +78,7 @@ class WorkReportTests(unittest.TestCase):
             work_report.update_makeup(report.path, "测试活动", 1)
             work_report.export_report(report.path, output)
             self.assertEqual(read(output)["人员明细"][1][4], "已提交未核查")
-            self.assertEqual(len(read(output)["待核对人员"]), 2)
+            self.assertEqual([r[1] for r in read(output)["待核对人员"][1:]], ["测试乙"])
 
     def test_grade_click_failure_preserves_unconfirmed_person(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -112,7 +112,7 @@ class WorkReportTests(unittest.TestCase):
                 sheets = read(work_report.export_report(report.path, folder / "输出.xlsx"))
                 self.assertEqual(list(sheets), ["任务汇总", "人员明细", "待核对人员"])
                 self.assertEqual(len(sheets["人员明细"]), 4)
-                self.assertEqual(sheets["人员明细"][1][4], "已提交未核查" if task == "credit" else roster_workflow.TASKS[task][1])
+                self.assertEqual(sheets["人员明细"][1][4], "已补签" if task == "makeup" else "已提交未核查")
                 self.assertEqual(sheets["人员明细"][2][4], "未找到")
                 self.assertEqual(sheets["人员明细"][3][4], "跳过")
                 for protected in (source, result.feedback_path, result.plan_path):
@@ -126,7 +126,9 @@ class WorkReportTests(unittest.TestCase):
             report = work_report.WorkReport(tmp, "补签", "测试", "按年级", condition="2023级")
             report.finish("本次工作完成", "没有目标年级待补签人员；未提交。")
             result = read(work_report.export_report(report.path, Path(tmp) / "空结果.xlsx"))
-            self.assertEqual(dict(result["任务汇总"][1:])["记录人数"], 0)
+            self.assertIn(("记录人数", 0), [tuple(row[:2]) for row in result["任务汇总"]])
+            self.assertEqual(result["任务汇总"][-1][0], "姓名")
+            self.assertEqual(result["任务汇总"][-2][0], "异常及未执行人员（0 条）")
             self.assertEqual(len(result["人员明细"]), 1)
 
     def test_external_text_is_not_excel_formula_and_output_is_atomic(self):
@@ -160,7 +162,7 @@ class WorkReportTests(unittest.TestCase):
             export.assert_not_called()
 
     def test_export_failure_does_not_show_success(self):
-        app = SimpleNamespace(running=False, _work_report_path=Path("unused.json"), run=lambda job: job(),
+        app = SimpleNamespace(running=False, _work_report_path=Path("unused.json"), run=lambda job, **kw: job(), _check_stop=lambda: None, _stop_event=gui.threading.Event(),
                               _post=lambda fn, *args: fn(*args))
         with patch.object(gui.filedialog, "asksaveasfilename", return_value="工作.xlsx"), \
              patch.object(work_report, "export_report", side_effect=PermissionError("占用")), \

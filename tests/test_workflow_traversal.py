@@ -113,6 +113,16 @@ class TraversalTests(unittest.TestCase):
         self.assertEqual(len(selected), 1)
         self.assertEqual(state["page"], 14)
 
+    def test_unexpected_count_before_selection_never_clicks(self):
+        backend, _ = self.backend([[self.row("张甲")]])
+        clicks = []
+        backend.d = SimpleNamespace(click=lambda *args: clicks.append(args))
+        backend.count = lambda: 1
+        with patch("device_checks.wait_count", side_effect=lambda fn: fn()), \
+             self.assertRaisesRegex(RuntimeError, "计数发生意外变化"):
+            backend.select("张甲\x1f班级", expected_before=0)
+        self.assertEqual(clicks, [])
+
     def test_failed_selection_never_reclicks(self):
         backend, state = self.backend([[self.row("张甲")]])
         clicks = []

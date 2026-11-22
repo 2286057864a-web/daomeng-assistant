@@ -207,25 +207,34 @@ def _cell(value):
     return str(value).strip()
 
 
-def prepare_roster(path, allow_name_only=False):
+ROSTER_DUPLICATE = "名单内重名，已全部跳过"
+
+
+def prepare_roster(path, allow_name_only=False, *, skip_duplicate_names=False):
     wb = load_workbook(path, read_only=True, data_only=True)
     logs, people, sid_names, seen = [], [], {}, set()
     try:
         rows = wb.worksheets[0].iter_rows(values_only=True)
         header = [_cell(v) for v in next(rows, ())]
         if "姓名" not in header or ("学号" not in header and not allow_name_only):
-            raise ValueError("名单表头须含「姓名」「学号」；补签名单可仅含「姓名」。")
+            raise ValueError("名单表头须含「姓名」。" if allow_name_only else "名单表头须含「姓名」「学号」。")
         for required in ("姓名", "学号"):
             if header.count(required) > 1:
                 raise ValueError(f"表头重复：{required}")
         name_col = header.index("姓名")
         sid_col = header.index("学号") if "学号" in header else None
+        # 先按原始姓名计数，空学号、相同学号或无效学号都不能掩盖另一行同名者。
+        if skip_duplicate_names:
+            rows = list(rows)
+            name_counts = Counter(_cell(row[name_col]) for row in rows if name_col < len(row))
         for number, row in enumerate(rows, 2):
             name = _cell(row[name_col]) if name_col < len(row) else ""
             sid = _cell(row[sid_col]) if sid_col is not None and sid_col < len(row) else ""
             reason = ""
             if not name:
                 reason = "姓名为空"
+            elif skip_duplicate_names and name_counts[name] > 1:
+                reason = ROSTER_DUPLICATE
             elif not sid and allow_name_only:
                 pass
             elif not re.fullmatch(r"[0-9]{11}", sid):
@@ -276,7 +285,8 @@ def _save(wb, output):
     output.parent.mkdir(parents=True, exist_ok=True)
     for ws in wb:
         ws.freeze_panes = "A2"
-        ws.auto_filter.ref = ws.dimensions
+        if not ws.auto_filter.ref:
+            ws.auto_filter.ref = ws.dimensions
         for cell in ws[1]:
             cell.font = Font(bold=True)
             cell.fill = PatternFill("solid", fgColor="DDE6F5")
@@ -311,7 +321,7 @@ def write_plan(plan, output):
     return _save(wb, output)
 
 
-RESULTS = {"已录取", "已补签", "已发分", "未找到", "失败", "未处理", "已提交未核查", "提交结果待核对"}
+RESULTS = {"重名跳过", "已勾选未提交", "已录取", "已补签", "已发分", "未找到", "失败", "未处理", "已提交未核查", "提交结果待核对"}
 FEEDBACK_HEADER = ["序号", "姓名", "学号", "分组", "结果", "说明", "时间"]
 
 
@@ -334,6 +344,6 @@ def write_feedback(rows, output, *, dry=False):
             raise ValueError("反馈记录格式不正确。")
         values = [number, *row[1:]]
         _append(ws, values)
-        if row[4] in {"未找到", "失败", "提交结果待核对"}:
+        if row[4] in {"重名跳过", "未找到", "失败", "提交结果待核对", "已勾选未提交"}:
             _append(pending, values)
     return _save(wb, output)
